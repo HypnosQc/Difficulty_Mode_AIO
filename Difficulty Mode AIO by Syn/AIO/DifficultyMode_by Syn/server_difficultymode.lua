@@ -6,16 +6,18 @@ local AIO = AIO or require("AIO")
 
 local MyHandlers = AIO.AddHandlers("ChooseDifficulty", {})
 
-function DMOCC(event, player)
+local NPCID = 11326
+
+function DifficultyMode_OnCharacterCreate(event, player)
 	local playerGUID = player:GetGUIDLow()
 	CharDBQuery("INSERT INTO `character_difficulty_mode` (`playerGUID`, `ActiveDifficultyMode`) VALUES ("..playerGUID..", 1);")
 end
 
-function DMOCD(event, guid)
+function DifficultyMode_OnCharacterDelete(event, guid)
 	CharDBQuery("DELETE FROM character_difficulty_mode WHERE playerGUID = "..guid.."")
 end
 
-function DMOL(event, player)
+function DifficultyMode_OnLogin(event, player)
 	local playerGUID = player:GetGUIDLow()
 	
 	local AAA = CharDBQuery( "SELECT ActiveDifficultyMode FROM character_difficulty_mode WHERE playerGUID = "..playerGUID)
@@ -29,6 +31,8 @@ function DMOL(event, player)
 		player:SetPhaseMask( 1, true )
 	elseif ( playerActiveDifficultyMode == "2" ) then
 		player:SetPhaseMask( 2, true )
+	elseif ( playerActiveDifficultyMode == "4" ) then
+		player:SetPhaseMask( 4, true )
 	end
 end
 
@@ -72,19 +76,40 @@ function MyHandlers.ChooseDifficulty_HellMode(player, spellid)
 end
 
 function MyHandlers.displayChooseDifficulty(player, spellid)
-	AIO.Handle(player, "ChooseDifficulty", "CDF")
+	AIO.Handle(player, "ChooseDifficulty", "ChooseDifficultyFrame")
 	return false
 end
 
-local function CDOC(event, player, command)
+local function ChooseDifficultyOnCommand(event, player, command)
+	inCombat = player:IsInCombat()
+	
     if(command == "choosedifficulty") then
-		AIO.Handle(player, "ChooseDifficulty", "CDF")
-		return false
+		if ( inCombat == false ) then
+			AIO.Handle(player, "ChooseDifficulty", "ChooseDifficultyFrame")
+			return false
+		else
+			player:SendBroadcastMessage("You can not use this command in combat.")
+			return;
+		end
 	end
 end
 
-RegisterPlayerEvent(1, DMOCC)
-RegisterPlayerEvent(2, DMOCD)
-RegisterPlayerEvent(4, DMOL)
+local function ChooseDifficulty_OnGossipHello(event, player, object)
+	inCombat = player:IsInCombat()
+	
+	if ( inCombat == false ) then
+		AIO.Handle(player, "ChooseDifficulty", "ChooseDifficultyFrame")
+		return false
+	else
+		player:SendBroadcastMessage("You can not use this NPC in combat.")
+		return;
+	end
+end
 
-RegisterPlayerEvent(42, CDOC)
+RegisterPlayerEvent(1, DifficultyMode_OnCharacterCreate)
+RegisterPlayerEvent(2, DifficultyMode_OnCharacterDelete)
+RegisterPlayerEvent(3, DifficultyMode_OnLogin)
+
+RegisterPlayerEvent(42, ChooseDifficultyOnCommand)
+
+RegisterCreatureGossipEvent(NPCID, 1, ChooseDifficulty_OnGossipHello)
