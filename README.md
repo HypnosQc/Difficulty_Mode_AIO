@@ -25,3 +25,7 @@ This repository is no longer actively maintained. Feel free to use it and contri
 
 ## Contributing
 Contributions are welcome! If you have any improvements or bug fixes, feel free to submit a pull request.
+
+
+## Important
+after the installation make sure you create a new character for the database to know that your character is linked to the system if you have older characters already created the script won't register their phasing difficulty when logout so you'll be back in normal and not in hard you'll need to add the character guid manually from "character" table in character database so the script could see old character cause the script generate the guid in is custom table when a cracater is created. 
