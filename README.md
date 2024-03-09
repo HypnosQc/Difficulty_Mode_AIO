@@ -11,7 +11,7 @@ This repository is no longer actively maintained. Feel free to use it and contri
 1. Download and install [MPQ Editor](https://www.zezula.net/en/mpq/download.html) for creating a patch.
 2. Extract the contents of the `Client` folder into your patch using the MPQ Editor.
 3. Install the custom required tables from the `Database` folder into your Character Database.
-4. Place the `DifficultyMode` folder into your `core/lua_scripts` folder.
+4. Place the `DifficultyMode_by Syn` folder into your `core/lua_scripts` folder.
 5. Ensure that you have AIO installed in your core's Lua folder and client side. You can find AIO [here](https://github.com/Rochet2/AIO).
 
 ### Final Steps
